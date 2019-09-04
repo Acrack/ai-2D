@@ -1,22 +1,23 @@
 class Ball {
-  constructor(x, y) {
-    this.radius = 40;
-    this.position = createVector(x, y);
+  constructor() {
+    this.radius = 10;
+    this.mass = random(1, 5);
+    this.position = createVector(random(width), height / 2);
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
   }
 
-  move() {
-    this.mouse = createVector(mouseX, mouseY);
-    this.mouse.sub(this.position);
-    this.mouse.setMag(0.1);
+  applyForce(force) {
+    let finalForce = p5.Vector.div(force, this.mass);
 
-    this.acceleration = this.mouse;
+    this.acceleration.add(finalForce);
+  }
+
+  update() {
     this.velocity.add(this.acceleration);
     this.position.add(this.velocity);
 
-    stroke(255);
-    line(this.position.x, this.position.y, mouseX, mouseY);
+    this.acceleration.mult(0);
   }
 
   bounce() {
@@ -30,6 +31,6 @@ class Ball {
   }
 
   display() {
-    ellipse(this.position.x, this.position.y, this.radius);
+    ellipse(this.position.x, this.position.y, (this.radius * this.mass));
   }
 }
