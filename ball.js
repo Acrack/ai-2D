@@ -2,7 +2,7 @@ class Ball {
   constructor() {
     this.radius = 10;
     this.mass = random(1, 5);
-    this.position = createVector(random(width), height / 2);
+    this.position = createVector(random(width), height * 1/10);
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
   }
@@ -20,17 +20,25 @@ class Ball {
     this.acceleration.mult(0);
   }
 
-  bounce() {
-    if ((this.position.x + 20 > width) || this.position.x < 20) {
-      this.velocity.x = this.velocity.x * -1;
+  edges() {
+    let radius = (this.radius * this.mass);
+
+    if (this.position.x > width) {
+      this.position.x = width;
+      this.velocity.x *= -1;
+    } else if (this.position.x < 0) {
+      this.velocity.x *= -1;
+      this.position.x = 0;
     }
 
-    if ((this.position.y + 20 > height) || this.position.y < 20) {
-      this.velocity.y = this.velocity.y * -1;
+    if (this.position.y > height) {
+      this.position.y = height;
+      this.velocity.y *= -1;
     }
   }
 
   display() {
-    ellipse(this.position.x, this.position.y, (this.radius * this.mass));
+    fill(100);
+    circle(this.position.x, this.position.y, (this.radius * this.mass));
   }
 }
