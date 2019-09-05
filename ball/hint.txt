@@ -1,0 +1,19 @@
+Gravity:
+  gravity = createVector(0, 0.3);
+  gravity.mult(ball.mass);
+  ball.applyForce(gravity);
+
+Friction:
+  let coefF = -0.1;
+  let friction = ball.velocity.copy();
+  friction.normalize();
+  friction.mult(coefF);
+  ball.applyForce(friction);
+
+Drag:
+  let coefD = -0.1;
+  let drag = ball.velocity.copy();
+  let speed = ball.velocity.mag();
+  drag.normalize()
+  drag.mult(coefD * speed * speed);
+  ball.applyForce(drag);
