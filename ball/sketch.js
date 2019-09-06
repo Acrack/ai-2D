@@ -15,6 +15,7 @@ function draw() {
   background(200);
   
   attractor = new Attractor();
+  
   attractor.display();
 
   liquid.display();
@@ -30,7 +31,9 @@ function draw() {
       liquid.drag(ball);
     }
 
-    attractor.attract(ball);
+    if (mouseIsPressed) {
+      attractor.attract(ball);
+    }
     
     ball.update();
     ball.edges();

@@ -1,7 +1,7 @@
 class Ball {
   constructor() {
     this.radius = 10;
-    this.mass = random(1, 5);
+    this.mass = random(2, 4);
     this.position = createVector(random(width), height * 1/10);
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
