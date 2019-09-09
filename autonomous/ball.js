@@ -1,11 +1,10 @@
-class Particule {
+class Ball {
   constructor() {
-    this.radius = 2;
-    this.mass = 2;
-    this.lifespan = 150;
-    this.position = createVector(width/2, 50);
-    this.velocity = createVector(random(-1, 1), random(-1, 1));
-    this.acceleration = createVector(0, 0.05);
+    this.radius = 10;
+    this.mass = random(2, 4);
+    this.position = createVector(random(width), height * 1/10);
+    this.velocity = createVector(0, 0);
+    this.acceleration = createVector(0, 0);
   }
 
   applyForce(force) {
@@ -18,7 +17,7 @@ class Particule {
     this.velocity.add(this.acceleration);
     this.position.add(this.velocity);
 
-    this.lifespan -= 2;
+    this.acceleration.mult(0);
   }
 
   edges() {
@@ -38,14 +37,8 @@ class Particule {
     }
   }
 
-  isDead() {
-  	return this.lifespan <= 0;
-  }
-
-
   display() {
-    stroke(100, this.lifespan);
-    fill(100, this.lifespan);
+    fill(100);
     circle(this.position.x, this.position.y, (this.radius * this.mass));
   }
 }

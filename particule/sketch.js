@@ -1,7 +1,7 @@
 function setup() {
   createCanvas(720, 400);
 
-  elements = 10;
+  elements = 100;
   population = [];
 
   for (let i = 0; i < elements; i++) {
@@ -38,7 +38,13 @@ function draw() {
     particule.display();
 
     if (particule.isDead()) {
-      background(255, 0, 0);
+      population.splice(particule);
+
+      for (let i = 0; i < elements; i++) {
+        population.push(new Particule());
+      }
+
+      //background(255, 0, 0);
     }
   }
 }
