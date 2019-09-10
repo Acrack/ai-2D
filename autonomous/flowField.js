@@ -4,6 +4,7 @@ class FlowField {
     this.cols = width / this.resolution;
     this.rows = height / this.resolution;
     this.field = [];
+    this.zoff = 0.0;
 
     this.init();
   }
@@ -19,13 +20,33 @@ class FlowField {
       for (let j = 0; j < this.rows; j++) {
         let theta = map(noise(xoff,yoff), 0, 1, 0, TWO_PI);
 
-        this.field[i][j] = createVector(cos(theta), sin(theta));
+        this.field[i][j] = p5.Vector.fromAngle(theta);
 
         yoff += 0.1;
       }
 
       xoff += 0.1;
     }
+  }
+
+  update() {
+    let xoff = 0;
+
+    for (let i = 0; i < this.cols; i++) {
+      let yoff = 0;
+
+      for (let j = 0; j < this.rows; j++) {
+        let theta = map(noise(xoff, yoff, this.zoff), 0, 1, 0, TWO_PI);
+
+        this.field[i][j] = p5.Vector.fromAngle(theta);
+
+        yoff += 0.1;
+      }
+
+      xoff += 0.1;
+    }
+
+    this.zoff += 0.01;
   }
 
   drawVector(vector, x, y, scale) {
@@ -40,8 +61,8 @@ class FlowField {
     let length = vector.mag() * scale;
 
     line(0, 0, length, 0);
-    //line(length, 0, length - arrowsize, arrowsize / 2);
-    //line(length, 0, length - arrowsize, -arrowsize / 2);
+    line(length, 0, length - arrowsize, arrowsize / 2);
+    line(length, 0, length - arrowsize, -arrowsize / 2);
 
     pop();
   }

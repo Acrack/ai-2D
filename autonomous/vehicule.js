@@ -5,8 +5,8 @@ class Vehicule {
     this.maxSpeed = 5;
     this.maxForce = 0.1;
     this.position = createVector(x, y);
-    this.velocity = createVector(10, 5);
-    this.acceleration = createVector(0, 0.2);
+    this.velocity = createVector(0, 0);
+    this.acceleration = createVector(0, 0);
   }
 
   applyForce(force) {
@@ -16,33 +16,60 @@ class Vehicule {
   }
 
   seek(target) {
-    let desired = p5.Vector.sub(target, this.position);
-    let distance = desired.mag();
-
-    if (distance < 100) {
-      let magnitude = map(distance, 0, 100, 0, this.maxSpeed);
-      desired.setMag(magnitude);
-    } else {
+      let desired = p5.Vector.sub(flow, this.position);
+      let distance = desired.mag();
       desired.setMag(this.maxSpeed);
-    }
 
-    let steering = p5.Vector.sub(desired, this.velocity);
+      if (distance < 100) {
+        let magnitude = map(distance, 0, 100, 0, this.maxSpeed);
+        desired.setMag(magnitude);
+      } else {
+        desired.setMag(this.maxSpeed);
+      }
+
+      let steering = p5.Vector.sub(desired, this.velocity);
+      steering.limit(this.maxForce);
+      
+      this.applyForce(steering);
+  }
+
+  follow(flowerField) {
+    let column = constrain(Math.round(this.position.x / flowerField.resolution), 0, flowerField.cols - 1);
+    let row = constrain(Math.round(this.position.y / flowerField.resolution), 0, flowerField.rows - 1);
+    let flow = flowerField.field[column][row].copy();
+
+    flow.setMag(this.maxSpeed);
+
+    let steering = p5.Vector.sub(flow, this.velocity);
     steering.limit(this.maxForce);
     
     this.applyForce(steering);
   }
 
-  update(follower) {
+  update() {
     this.velocity.add(this.acceleration);
+
+    this.velocity.limit(this.maxSpeed);
+
     this.position.add(this.velocity);
 
     this.acceleration.mult(0);
   }
 
   edges() {
-    let radius = (this.radius * this.mass);
-
     if (this.position.x > width) {
+      this.position.x = 0;
+    } else if (this.position.x < 0) {
+      this.position.x = width;
+    }
+
+    if (this.position.y > height) {
+      this.position.y = 0;
+    } else if (this.position.y < 0) {
+      this.position.y = height;
+    }
+
+    /*if (this.position.x > width) {
       this.position.x = width;
       this.velocity.x *= -1;
     } else if (this.position.x < 0) {
@@ -56,7 +83,7 @@ class Vehicule {
     } else if (this.position.y < 0) {
       this.velocity.y *= -1;
       this.position.y = 0;
-    }
+    }*/
   }
 
   display() {
