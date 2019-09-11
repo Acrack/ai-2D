@@ -1,9 +1,9 @@
 function setup() {
-  createCanvas(760, 420);
+  createCanvas(1280, 720);
 
   flowField = new FlowField(20);
 
-  elements = 1000;
+  elements = 200;
   population = [];
 
   for (let i = 0; i < elements; i++) {

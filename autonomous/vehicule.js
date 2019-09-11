@@ -1,9 +1,9 @@
 class Vehicule {
   constructor(x, y) {
-    this.radius = 5;
+    this.radius = 10;
     this.mass = 1;
     this.maxSpeed = 5;
-    this.maxForce = 0.1;
+    this.maxForce = 0.01;
     this.position = createVector(x, y);
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
@@ -63,10 +63,10 @@ class Vehicule {
       this.position.x = width;
     }
 
-    if (this.position.y > height) {
+    if (this.position.y > windowHeight) {
       this.position.y = 0;
     } else if (this.position.y < 0) {
-      this.position.y = height;
+      this.position.y = windowHeight;
     }
 
     /*if (this.position.x > width) {
