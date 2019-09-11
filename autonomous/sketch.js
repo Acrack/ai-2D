@@ -1,9 +1,9 @@
 function setup() {
-  createCanvas(720, 400);
+  createCanvas(760, 420);
 
   flowField = new FlowField(20);
 
-  elements = 200;
+  elements = 1000;
   population = [];
 
   for (let i = 0; i < elements; i++) {
@@ -14,7 +14,10 @@ function setup() {
 function draw() {
   background(200);
 
-  flowField.display();
+  if (mouseIsPressed) {
+    flowField.display();
+  }
+  
   flowField.update();
 
   for (let i = 0; i < population.length; i++) {
