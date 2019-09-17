@@ -1,6 +1,6 @@
 let angle = 0;
 let aVel = 0.0; 
-let aAcc = 1/30;
+let aAcc = 1/10;
 const history = [];
 
 function setup() {
