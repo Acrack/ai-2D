@@ -1,22 +1,29 @@
 function setup() {
   createCanvas(800, 450);
+
+  path = new Path();
+  
+  elements = 100;
+  population = [];
+
+  for (let i = 0; i < elements; i++) {
+    population.push(new Vehicule(random(1, 50), random(1, 50), random(1, 8)));
+  }
 }
 
 function draw() {
   background(200);
 
-  push();
-    translate(width / 2, height / 2);
+  path.display();
 
-    let path = createVector(200, 0);
-    line(0, 0, path.x, path.y);
+  for (let i = 0; i < population.length; i++) {
+    let vehicule = population[i];
 
-    let currentDirection = createVector(mouseX - width / 2, mouseY - height / 2);
-    line(0, 0, currentDirection.x, currentDirection.y);
-
-    let projection = resolveProjection(currentDirection, path);
-    line(currentDirection.x, currentDirection.y, projection.x, projection.y);
-  pop();
+    vehicule.follow(path);
+    vehicule.update();
+    vehicule.edges();
+    vehicule.display();
+  }
 }
 
 function resolveProjection(currentDirection, path) {
