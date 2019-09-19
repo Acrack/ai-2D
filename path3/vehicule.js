@@ -1,11 +1,11 @@
 class Vehicule {
   constructor(x, y, mass) {
     this.radius = 1 * mass;
-    this.mass = mass;
+    this.mass = 0.5 * mass;
     this.maxSpeed = 2;
     this.maxForce = 5;
-    this.sensor = 50;
-    this.desiredSeparation = this.radius * 2;
+    this.sensor = 30;
+    this.desiredSeparation = this.radius * 2.5;
     this.position = createVector(x, y);
     this.velocity = createVector(random(-2, 2), random(-2, 2));
     this.acceleration = createVector(random(0.1, 1), random(0.1, 1));
@@ -21,6 +21,69 @@ class Vehicule {
     fill(100);
     circle(this.position.x, this.position.y, this.sensor);
   }
+
+  applyBehaviours(vehicules) {
+    let cohesionForce = this.cohesion(vehicules);
+    let alignForce = this.align(vehicules);
+    let separateForce = this.separate(vehicules);
+    cohesionForce.mult(0.2);
+    alignForce.mult(1);
+    separateForce.mult(0.2);
+    this.applyForce(cohesionForce);
+    this.applyForce(alignForce);
+    this.applyForce(separateForce);
+  }
+
+  cohesion (vehicules) {
+    let sum = createVector(0, 0);
+    let count = 0;
+
+    for (let i = 0; i < population.length; i++) {
+      let vehicule = population[i];
+      let distance = p5.Vector.dist(this.position, vehicule.position);
+
+      if (distance > 0 && distance < this.desiredSeparation) {
+        sum.add(vehicule.position);
+        count++;
+      }
+    }
+
+    if (count > 0) {
+      sum.div(count);
+
+      return this.seek(sum);
+    }
+
+    return createVector(0, 0);
+  }
+
+  align(vehicules) {
+    let sum = createVector(0, 0);
+    let count = 0;
+
+    for (let i = 0; i < population.length; i++) {
+      let vehicule = population[i];
+      
+      let distance = p5.Vector.dist(this.position, vehicule.position);
+      
+      if (distance > 0 && distance < this.sensor) {
+        sum.add(vehicule.velocity);
+        count++;
+      }
+    }
+
+    if (count > 0) {
+      sum.div(count);
+      sum.setMag(this.maxSpeed);
+      let steer = p5.Vector.sub(sum, this.velocity);
+      steer.limit(this.maxForce);
+
+      return steer;
+    }
+
+    return createVector(0, 0);
+  }
+
 
   separate(vehicules) {
     let sum = createVector(0, 0);
@@ -45,32 +108,11 @@ class Vehicule {
       sum.setMag(this.maxSpeed);
       let steer = p5.Vector.sub(sum, this.velocity);
       steer.limit(this.maxForce);
-      this.applyForce(steer);
-    }
-  }
 
-  align(vehicules) {
-    let sum = createVector(0, 0);
-    let count = 0;
-
-    for (let i = 0; i < population.length; i++) {
-      let vehicule = population[i];
-      
-      let distance = p5.Vector.dist(this.position, vehicule.position);
-      
-      if (distance > 0 && distance < this.sensor) {
-        sum.add(vehicule.velocity);
-        count++;
-      }
+      return steer;
     }
 
-    if (count > 0) {
-      sum.div(count);
-      sum.setMag(this.maxSpeed);
-      let steer = p5.Vector.sub(sum, this.velocity);
-      steer.limit(this.maxForce);
-      this.applyForce(steer);
-    }
+    return createVector(0, 0);
   }
 
   getNormalPoint(predictedPosition, start, end) {
@@ -104,16 +146,21 @@ class Vehicule {
 
       normalPoint = this.getNormalPoint(predictedPosition, startPoint, endPoint);
 
-      if (normalPoint.x < startPoint.x || normalPoint.x > endPoint.x) {
+      if (normalPoint.x < min(startPoint.x,endPoint.x) 
+        || normalPoint.x > max(startPoint.x,endPoint.x) 
+        || normalPoint.y < min(startPoint.y,endPoint.y) 
+        || normalPoint.y > max(startPoint.y,endPoint.y)
+      ) {
         normalPoint = endPoint.copy();
       }
+
+      direction = p5.Vector.sub(endPoint, startPoint);
 
       distance = p5.Vector.dist(predictedPosition, normalPoint);
       
       if (distance < worldRecord) {
         worldRecord = distance;
 
-        direction = p5.Vector.sub(endPoint, startPoint);
         direction.setMag(30);
 
         target = p5.Vector.add(normalPoint, direction);
@@ -121,7 +168,9 @@ class Vehicule {
     }
 
     if (worldRecord > path.radius) {
-      this.seek(target);
+      let steer = this.seek(target);
+
+      this.applyForce(steer);
     }
   }
 
@@ -137,10 +186,10 @@ class Vehicule {
         desired.setMag(this.maxSpeed);
       }
 
-      let steering = p5.Vector.sub(desired, this.velocity);
-      steering.limit(this.maxForce);
-      
-      this.applyForce(steering);
+      let steer = p5.Vector.sub(desired, this.velocity);
+      steer.limit(this.maxForce);
+
+      return steer;
   }
 
   update() {
@@ -150,37 +199,17 @@ class Vehicule {
     this.acceleration.mult(0);
   }
 
-  // edges() {
-  //   if (this.position.x > width) {
-  //     this.position.x = 0;
-  //   } else if (this.position.x < 0) {
-  //     this.position.x = width;
-  //   }
-
-  //   if (this.position.y > windowHeight) {
-  //     this.position.y = 0;
-  //   } else if (this.position.y < 0) {
-  //     this.position.y = windowHeight;
-  //   }
-  // }
-
   edges() {
-    let radius = (this.radius * this.mass);
-
     if (this.position.x > width) {
-      this.position.x = width;
-      this.velocity.x *= -1;
-    } else if (this.position.x < 0) {
-      this.velocity.x *= -1;
       this.position.x = 0;
+    } else if (this.position.x < 0) {
+      this.position.x = width;
     }
 
-    if (this.position.y > height) {
-      this.position.y = height;
-      this.velocity.y *= -1;
-    } else if (this.position.y < 0) {
-      this.velocity.y *= -1;
+    if (this.position.y > windowHeight) {
       this.position.y = 0;
+    } else if (this.position.y < 0) {
+      this.position.y = windowHeight;
     }
   }
 

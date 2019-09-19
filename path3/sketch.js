@@ -4,25 +4,30 @@ function setup() {
   path = new Path();
   path.generatePath();
   
-  elements = 100;
+  elements = 1;
   population = [];
 
   for (let i = 0; i < elements; i++) {
-    population.push(new Vehicule(random(1, width), random(1, height), random(1, 8)));
+    population.push(new Vehicule(random(1, width), random(1, height), random(2, 4)));
   }
 }
 
 function draw() {
   background(200);
 
-  let mouse = createVector(mouseX, mouseY);
+  path.display();
+
+  if (mouseIsPressed) {
+    population.push(new Vehicule(mouseX, mouseY, random(2, 4)));
+  }
 
   for (let i = 0; i < population.length; i++) {
     let vehicule = population[i];
 
-    vehicule.seek(mouse);
-    //vehicule.align(population);
-    vehicule.separate(population);
+    vehicule.applyBehaviours(population);
+
+    vehicule.follow(path);
+
     vehicule.update();
     vehicule.edges();
     vehicule.display();
