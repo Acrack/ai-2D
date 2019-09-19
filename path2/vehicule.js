@@ -4,15 +4,45 @@ class Vehicule {
     this.mass = mass;
     this.maxSpeed = 5;
     this.maxForce = 2;
+    this.sensor = 25;
     this.position = createVector(x, y);
-    this.velocity = createVector(0, 0);
-    this.acceleration = createVector(0, 2);
+    this.velocity = createVector(random(-2, 2), random(-2, 2));
+    this.acceleration = createVector(random(0.1, 1), random(0.1, 1));
   }
 
   applyForce(force) {
     let finalForce = p5.Vector.div(force, this.mass);
 
     this.acceleration.add(finalForce);
+  }
+
+  displayRadius(radius) {
+    fill(100);
+    circle(this.position.x, this.position.y, this.sensor);
+  }
+
+  align(vehicules) {
+    let sum = createVector(0, 0);
+    let count = 0;
+
+    for (let i = 0; i < population.length; i++) {
+      let vehicule = population[i];
+      
+      let d = p5.Vector.dist(this.position, vehicule.position);
+      
+      if (d > 0 && d < this.sensor) {
+        sum.add(vehicule.velocity);
+        count++;
+      }
+    }
+
+    if (true) {
+      sum.div(count);
+      sum.setMag(this.maxSpeed);
+      let steer = p5.Vector.sub(sum, this.velocity);
+      steer.limit(this.maxForce);
+      this.applyForce(steer);
+    }
   }
 
   getNormalPoint(predictedPosition, start, end) {
@@ -92,17 +122,37 @@ class Vehicule {
     this.acceleration.mult(0);
   }
 
+  // edges() {
+  //   if (this.position.x > width) {
+  //     this.position.x = 0;
+  //   } else if (this.position.x < 0) {
+  //     this.position.x = width;
+  //   }
+
+  //   if (this.position.y > windowHeight) {
+  //     this.position.y = 0;
+  //   } else if (this.position.y < 0) {
+  //     this.position.y = windowHeight;
+  //   }
+  // }
+
   edges() {
+    let radius = (this.radius * this.mass);
+
     if (this.position.x > width) {
-      this.position.x = 0;
-    } else if (this.position.x < 0) {
       this.position.x = width;
+      this.velocity.x *= -1;
+    } else if (this.position.x < 0) {
+      this.velocity.x *= -1;
+      this.position.x = 0;
     }
 
-    if (this.position.y > windowHeight) {
-      this.position.y = 0;
+    if (this.position.y > height) {
+      this.position.y = height;
+      this.velocity.y *= -1;
     } else if (this.position.y < 0) {
-      this.position.y = windowHeight;
+      this.velocity.y *= -1;
+      this.position.y = 0;
     }
   }
 
