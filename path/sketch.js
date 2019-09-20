@@ -4,7 +4,7 @@ function setup() {
   path = new Path();
   path.generatePath();
   
-  elements = 500;
+  elements = 200;
   population = [];
 
   for (let i = 0; i < elements; i++) {

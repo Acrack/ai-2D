@@ -1,6 +1,6 @@
 class Vehicule {
   constructor(x, y, mass) {
-    this.radius = 1 * mass;
+    this.radius = 2 * mass;
     this.mass = 0.5 * mass;
     this.maxSpeed = 2;
     this.maxForce = 5;

@@ -2,7 +2,7 @@ class Vehicule {
   constructor(x, y, mass) {
     this.radius = 1 * mass;
     this.mass = mass;
-    this.maxSpeed = 5;
+    this.maxSpeed = 3;
     this.maxForce = 2;
     this.position = createVector(x, y);
     this.velocity = createVector(0, 0);
@@ -61,6 +61,13 @@ class Vehicule {
         target = p5.Vector.add(normalPoint, direction);
       }
     }
+
+    /*stroke('red');
+    line(predictedPosition.x, predictedPosition.y, normalPoint.x, normalPoint.y);
+    stroke('red');
+    line(this.position.x, this.position.y, predictedPosition.x, predictedPosition.y);
+    stroke('green');
+    line(predictedPosition.x, predictedPosition.y, target.x, target.y);*/
 
     if (worldRecord > path.radius) {
       this.seek(target);

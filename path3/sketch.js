@@ -26,8 +26,11 @@ function draw() {
 
     vehicule.applyBehaviours(population);
 
-    vehicule.follow(path);
+    if (mouseIsPressed) {
+      //population.push(new Vehicule(mouseX, mouseY, random(2, 4)));
+    }
 
+      vehicule.follow(path);
     vehicule.update();
     vehicule.edges();
     vehicule.display();

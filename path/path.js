@@ -8,8 +8,7 @@ class Path {
   	this.points.push(createVector(0, height / 8));
     this.points.push(createVector(width / 8, height / 4));
     this.points.push(createVector(width / 5, height / 7));
-    this.points.push(createVector(width / 3, height / 3));
-    this.points.push(createVector(width / 2, height / 7));
+    this.points.push(createVector(width / 3, height / 7));
     this.points.push(createVector(width / 2, height / 3));
     this.points.push(createVector(width, height - 20));
   }
