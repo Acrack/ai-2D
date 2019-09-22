@@ -1,0 +1,20 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+.stats, .all, .best {
+  font-family: "Courier";
+}
+
+.best {
+  font-size: 48;
+}
+
+.stats {
+  font-size: 24;
+}
