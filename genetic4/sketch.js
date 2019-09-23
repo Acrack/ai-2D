@@ -5,10 +5,19 @@ let popMax;
 let mutationRate;
 let population;
 let stats;
+let bestFitness;
 let walls = [];
 
 function setup() {
-  createCanvas(600, 450);
+  bestFitness = createP("Best");
+  bestFitness.position(10, 460);
+  bestFitness.class("best");
+
+  stats = createP("Stats");
+  stats.position(10, 480);
+  stats.class("stats");
+
+  createCanvas(800, 450);
 
   walls.push(new Wall(0, 0, width, 0));
   walls.push(new Wall(width, 0, width, height));
@@ -26,11 +35,12 @@ function setup() {
   start = createVector((100 + 150) / 2, 380);
   end = createVector(500, (100 + 150) / 2);
 
-  count = 25;
-  popMax = 20;
+  count = 0;
+  maxFrame = 400;
+  popMax = 500;
   mutationRate = 0.01;
 
-  population = new Population(start, end, count, mutationRate, popMax, walls);
+  population = new Population(start, end, maxFrame, mutationRate, popMax, walls);
 }
 
 function draw() {
@@ -48,22 +58,38 @@ function draw() {
     population.elements[i].display();
   }
 
-  count--;
+  count++;
 
-  if (count === 0) {
+  if (population.isDead()) {
+    count = maxFrame;
+  }
+
+  if (count === maxFrame) {
     population.calculateFitness();
 
-    console.log(population);
-    noLoop();
-    
-    population.generate();
+    population.evaluate();
 
-    // population.evaluate();
+    population.generate();
 
     if (population.isFinished()) {
       noLoop();
     }
 
-    count = 25;
+    count = 0;
   }
+
+  displayInfo();
+}
+
+function displayInfo() {
+  let best = population.getBest();
+
+  bestFitness.html("Best: " + nf(best.toFixed(3)));
+
+  let statstext = "total generations: " + population.getGenerations() + "<br>";
+  statstext += "average fitness: " + nf(population.getAverageFitness().toFixed(3)) + "<br>";
+  statstext += "total population: " + popMax + "<br>";
+  statstext += "mutation rate: " + floor(mutationRate * 100) + "%";
+
+  stats.html(statstext);
 }

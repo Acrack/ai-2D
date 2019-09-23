@@ -8,8 +8,10 @@ class Population {
     this.elements = [];
     this.generations = 0;
     this.finished = false;
-    this.best = "";
+    this.best = 0;
     this.perfectScore = 1;
+    this.maxFitness = 0;
+    this.avgFitness = 0;
 
     for (let i = 0; i < this.popMax; i++) {
       this.elements[i] = new Vehicle(start, end, count, walls);
@@ -24,22 +26,26 @@ class Population {
 
   generate() {
     let maxFitness = 0;
+    let total = 0;
 
     for (let i = 0; i < this.elements.length; i++) {
+      total += this.elements[i].fitness;
+
       if (this.elements[i].fitness > maxFitness) {
         maxFitness = this.elements[i].fitness;
       }
     }
 
-    console.log(maxFitness);
+    this.avgFitness = total / this.elements.length;
 
     let newElements = [];
 
     for (let i = 0; i < this.elements.length; i++) {
       let partnerA = this.acceptReject(maxFitness);
       let partnerB = this.acceptReject(maxFitness);
-      
+
       let child = partnerA.crossover(partnerB);
+
       child.mutate(this.mutationRate);
 
       newElements[i] = child;
@@ -73,21 +79,25 @@ class Population {
       }
     }
 
-    this.best = this.elements[index].getPhrase();
+    this.best = this.elements[index].fitness;
     
     if (worldRecord >= this.perfectScore) {
       this.finished = true;
     }
   }
 
-  getAverageFitness() {
-    let total = 0;
-
+  isDead() {
     for (let i = 0; i < this.elements.length; i++) {
-      total += this.elements[i].fitness;
+      if (!this.elements[i].dead) {
+        return false;
+      }
     }
 
-    return total / (this.elements.length);
+    return true;
+  }
+
+  getAverageFitness() {
+    return this.avgFitness;
   }
 
   isFinished() {

@@ -1,15 +1,16 @@
 class Vehicle {
-  constructor(start, end, count, walls) {
+  constructor(start, end, maxFrame, walls) {
+    this.dead = false;
     this.mass = 1;
-    this.maxSpeed = 7;
-    this.maxForce = 3;
+    this.maxSpeed = 3;
+    this.maxForce = 0.6;
     this.resolution = 360 / 6;
 
     this.start = start;
     this.end = end;
-    this.count = count;
+    this.maxFrame = maxFrame;
     this.fitness = 0;
-    this.dna = new DNA(start, end, count);
+    this.dna = new DNA(start, end, maxFrame);
 
     this.position = createVector(start.x, start.y);
     this.velocity = createVector(0, 0);
@@ -20,10 +21,26 @@ class Vehicle {
   }
 
   calculateFitness() {
-    let score = 100 - (this.position.dist(this.end) / 100);
+    let totalDistance = this.start.dist(this.end);
+    let currentDistance = this.position.dist(this.end);
+    let traveledDistance = totalDistance - currentDistance;
 
-    this.fitness = (score / this.count);
+    this.fitness = (traveledDistance / totalDistance);
+    this.fitness = this.fitness < 0 ? 0.0001 : this.fitness;
     this.fitness = pow(this.fitness, 2) + 0.01;
+  }
+
+  crossover(partner) {
+    let genes = this.dna.crossover(this, partner);
+
+    let child = new Vehicle(start, end, maxFrame, walls);
+    child.dna.genes = genes;
+    
+    return child;
+  }
+
+  mutate(mutationRate) {
+    this.dna.mutate(mutationRate);
   }
 
   applyForce(force) {
@@ -33,14 +50,21 @@ class Vehicle {
   }
 
   update(count) {
-    let direction = this.dna.genes[this.count - count];
+    if (!this.dead) {
+      let direction = this.dna.genes[count];
 
-    this.applyForce(direction);
+      this.applyForce(direction);
 
-    this.velocity.add(this.acceleration);
-    this.position.add(this.velocity);
+      this.acceleration.limit(this.maxForce);
 
-    this.acceleration.mult(0);
+      this.velocity.add(this.acceleration);
+
+      this.velocity.limit(this.maxSpeed);
+
+      this.position.add(this.velocity);
+
+      this.acceleration.mult(0);
+    }
   }
 
   generateRays() {
@@ -60,24 +84,29 @@ class Vehicle {
         let point = ray.cast(wall);
 
         if (point) {
+          
           let distance = p5.Vector.dist(this.position, point);
 
           if (distance < record) {
             record = distance;
             closest = point;
+
+            if (distance < 6) {
+              this.dead = true;
+            }
           }
         }
       }
 
       if (closest) {
-        stroke(255, 100);
+        stroke(255, 20);
         line(this.position.x, this.position.y, closest.x, closest.y);
       }
     }
   }
 
   display() {
-    fill(250);
+    fill(250, 100);
     circle(this.position.x, this.position.y, 10);
 
     this.generateRays();

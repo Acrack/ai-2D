@@ -1,41 +1,40 @@
 class DNA {
-  constructor(start, end) {
+  constructor(start, end, maxFrame) {
     this.start = start;
     this.end = end;
     this.genes = [];
-    this.count = 25;
+    this.maxFrame = maxFrame;
     this.generateGenome();
   }
 
   generateGenome() {
-    for (let i = this.count; i > 0; i--) {
+    for (let i = 0; i < this.maxFrame; i++) {
       let randomVector = createVector(random(- 0.01, 0.01), random(- 0.01, 0.01));
       randomVector.setMag(1);
 
-      this.genes[this.count - i] = randomVector;
+      this.genes[i] = randomVector;
     }
   }
 
-  crossover(partner) {
-    let child = new DNA(this.target);
-
+  crossover(partnerA, partnerB) {
+    let genes = [];
     let midpoint = floor(random(this.genes.length));
 
     for (let i = 0; i < this.genes.length; i++) {
       if (i > midpoint) {
-        child.genes[i] = this.genes[i];
+        genes[i] = partnerA.dna.genes[i];
       } else {
-        child.genes[i] = partner.genes[i];
+        genes[i] = partnerB.dna.genes[i];
       }
     }
 
-    return child;
+    return genes;
   }
 
   mutate(mutationRate) {
     for (let i = 0; i < this.genes.length; i++) {
       if (random(1) < mutationRate) {
-        this.genes[i] = p5.vector.fromAngle(radians(this.genes[i] + random(1, 10)));
+        this.genes[i] = p5.Vector.fromAngle(radians(this.genes[i] + random(1, 5)));
       }
     }
   }
