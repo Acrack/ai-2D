@@ -1,21 +1,29 @@
 class Vehicle {
-  constructor(start, end, walls) {
+  constructor(start, end, count, walls) {
     this.mass = 1;
     this.maxSpeed = 7;
     this.maxForce = 3;
-    this.resolution = 360 / 8;
+    this.resolution = 360 / 6;
 
     this.start = start;
     this.end = end;
-    this.dna = new DNA(start, end);
+    this.count = count;
+    this.fitness = 0;
+    this.dna = new DNA(start, end, count);
 
     this.position = createVector(start.x, start.y);
     this.velocity = createVector(0, 0);
-    this.acceleration = createVector(0.1, 0.1);
+    this.acceleration = createVector(0, 0);
 
     this.walls = walls;
     this.rays = [];
+  }
 
+  calculateFitness() {
+    let score = 100 - (this.position.dist(this.end) / 100);
+
+    this.fitness = (score / this.count);
+    this.fitness = pow(this.fitness, 2) + 0.01;
   }
 
   applyForce(force) {
@@ -24,7 +32,11 @@ class Vehicle {
     this.acceleration.add(finalForce);
   }
 
-  update() {
+  update(count) {
+    let direction = this.dna.genes[this.count - count];
+
+    this.applyForce(direction);
+
     this.velocity.add(this.acceleration);
     this.position.add(this.velocity);
 

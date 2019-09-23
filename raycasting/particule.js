@@ -54,8 +54,6 @@ class Particule {
       if (closest) {
         stroke(255, 100);
         line(this.position.x, this.position.y, closest.x, closest.y);
-        //fill(255);
-        //circle(closest.x, closest.y, 5);
       }
     }
   }

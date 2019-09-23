@@ -2,28 +2,18 @@ class DNA {
   constructor(start, end) {
     this.start = start;
     this.end = end;
-    this.fitness = 0;
     this.genes = [];
-    //this.generateGenome(end);
+    this.count = 25;
+    this.generateGenome();
   }
 
   generateGenome() {
-    for (let i = 0; i < this.target.length; i++) {
-      this.genes[i] = this.selectChar();
+    for (let i = this.count; i > 0; i--) {
+      let randomVector = createVector(random(- 0.01, 0.01), random(- 0.01, 0.01));
+      randomVector.setMag(1);
+
+      this.genes[this.count - i] = randomVector;
     }
-  }
-
-  calculateFitness() {
-    let score = 0;
-
-    for (let i = 0; i < this.genes.length; i++) {
-      if (this.genes[i] == this.target.charAt(i)) {
-        score++;
-      }
-    }
-
-    this.fitness = (score / this.target.length);
-    this.fitness = pow(this.fitness, 2) + 0.01;
   }
 
   crossover(partner) {
@@ -45,7 +35,7 @@ class DNA {
   mutate(mutationRate) {
     for (let i = 0; i < this.genes.length; i++) {
       if (random(1) < mutationRate) {
-        this.genes[i] = this.selectChar();
+        this.genes[i] = p5.vector.fromAngle(radians(this.genes[i] + random(1, 10)));
       }
     }
   }

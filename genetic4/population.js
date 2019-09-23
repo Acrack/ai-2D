@@ -1,11 +1,10 @@
 class Population {
-  constructor (start, end, mutationRate, popMax, walls) {
+  constructor (start, end, count, mutationRate, popMax, walls) {
     this.start = start;
     this.end = end;
     this.mutationRate = mutationRate;
     this.popMax = popMax;
     this.walls = walls;
-    this.matingPool = [];
     this.elements = [];
     this.generations = 0;
     this.finished = false;
@@ -13,10 +12,8 @@ class Population {
     this.perfectScore = 1;
 
     for (let i = 0; i < this.popMax; i++) {
-      this.elements[i] = new Vehicle(start, end, walls);
+      this.elements[i] = new Vehicle(start, end, count, walls);
     }
-
-    // this.calculateFitness();
   }
 
   calculateFitness() {
@@ -33,6 +30,8 @@ class Population {
         maxFitness = this.elements[i].fitness;
       }
     }
+
+    console.log(maxFitness);
 
     let newElements = [];
 

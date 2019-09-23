@@ -1,5 +1,6 @@
 let start;
 let end;
+let count;
 let popMax;
 let mutationRate;
 let population;
@@ -25,10 +26,11 @@ function setup() {
   start = createVector((100 + 150) / 2, 380);
   end = createVector(500, (100 + 150) / 2);
 
-  popMax = 2;
+  count = 25;
+  popMax = 20;
   mutationRate = 0.01;
 
-  population = new Population(start, end, mutationRate, popMax, walls);
+  population = new Population(start, end, count, mutationRate, popMax, walls);
 }
 
 function draw() {
@@ -42,18 +44,26 @@ function draw() {
   circle(end.x, end.y, 10);
 
   for (let i = 0; i < population.elements.length; i++) {
-    population.elements[i].applyForce(createVector(0, -0.1));
-    population.elements[i].update();
+    population.elements[i].update(count);
     population.elements[i].display();
   }
 
-  /*population.generate();
+  count--;
 
-  population.calculateFitness();
+  if (count === 0) {
+    population.calculateFitness();
 
-  population.evaluate();
-
-  if (population.isFinished()) {
+    console.log(population);
     noLoop();
-  }*/
+    
+    population.generate();
+
+    // population.evaluate();
+
+    if (population.isFinished()) {
+      noLoop();
+    }
+
+    count = 25;
+  }
 }
