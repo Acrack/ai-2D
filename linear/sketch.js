@@ -45,7 +45,7 @@ function gradientDescent() {
   }
 }
 
-function drawLine() { 
+function drawLine() {
   let x1 = 0;
   let y1 = m * x1 + b;
   let x2 = 1;
