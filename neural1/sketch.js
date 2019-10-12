@@ -36,12 +36,9 @@ function draw() {
 
   for (let i = 0; i < pointsLength; i++) {
     let point = points[i];
+    
+    point.show();
 
-    point.show(); 
-  }
-
-  for (let i = 0; i < pointsLength; i++) {
-    let point = points[i];
     let inputs = [point.x, point.y, point.bias];
     let target = point.label;
 
