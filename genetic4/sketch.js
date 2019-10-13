@@ -37,7 +37,7 @@ function setup() {
 
   count = 0;
   maxFrame = 400;
-  popMax = 500;
+  popMax = 100;
   mutationRate = 0.01;
 
   population = new Population(start, end, maxFrame, mutationRate, popMax, walls);
